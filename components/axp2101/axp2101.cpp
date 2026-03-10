@@ -21,7 +21,7 @@ void AXP2101::AXP2101::setup()
     ESP_LOGCONFIG(TAG, "Chip ID:0x%x", this->getChipID());
 
     delay(10);
-    if (!this->disable_power_rail_changes_) {
+    if (!this->disable_rails_auto_disable_) {
         // Disable unused channels unless explicitly disabled in config.
         this->disableDC2();
         this->disableDC3();
@@ -143,7 +143,7 @@ void AXP2101::AXP2101::dump_config()
 {
     ESP_LOGCONFIG(TAG, "AXP2101:");
     ESP_LOGCONFIG(TAG, "  disable_watchdog: %s", YESNO(this->disable_watchdog_));
-    ESP_LOGCONFIG(TAG, "  disable_power_rail_changes: %s", YESNO(this->disable_power_rail_changes_));
+    ESP_LOGCONFIG(TAG, "  disable_rails_auto_disable: %s", YESNO(this->disable_rails_auto_disable_));
     ESP_LOGCONFIG(TAG, "DC1  : %s   Voltage:%u mV",  this->isEnableDC1()  ? "+" : "-", this->getDC1Voltage());
     ESP_LOGCONFIG(TAG, "DC2  : %s   Voltage:%u mV",  this->isEnableDC2()  ? "+" : "-", this->getDC2Voltage());
     ESP_LOGCONFIG(TAG, "DC3  : %s   Voltage:%u mV",  this->isEnableDC3()  ? "+" : "-", this->getDC3Voltage());

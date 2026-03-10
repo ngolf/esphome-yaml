@@ -21,7 +21,7 @@ public:
     void dump_config() override;
     float get_setup_priority() const override { return setup_priority::IO; }
     void set_disable_watchdog(bool disable) { this->disable_watchdog_ = disable; }
-    void set_disable_power_rail_changes(bool disable) { this->disable_power_rail_changes_ = disable; }
+    void set_disable_rails_auto_disable(bool disable) { this->disable_rails_auto_disable_ = disable; }
     
     int readRegister(uint8_t reg);
     int writeRegister(uint8_t reg, uint8_t val);
@@ -434,7 +434,7 @@ private:
                                     float SteinhartB,
                                     float SteinhartC);
     bool disable_watchdog_{false};
-    bool disable_power_rail_changes_{false};
+    bool disable_rails_auto_disable_{false};
 
     uint8_t __chipModel{0};
     uint32_t __protectedMask{0};
