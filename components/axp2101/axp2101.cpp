@@ -21,14 +21,16 @@ void AXP2101::AXP2101::setup()
     ESP_LOGCONFIG(TAG, "Chip ID:0x%x", this->getChipID());
 
     delay(10);
-    // Disable unused channels
-    this->disableDC2();
-    this->disableDC3();
-    this->disableDC4();
-    this->disableDC5();
+    if (!this->disable_power_rail_changes_) {
+        // Disable unused channels unless explicitly disabled in config.
+        this->disableDC2();
+        this->disableDC3();
+        this->disableDC4();
+        this->disableDC5();
 
-    this->disableCPUSLDO();
-    this->disableDLDO1();
+        this->disableCPUSLDO();
+        this->disableDLDO1();
+    }
 
     this->clearIrqStatus();
 
@@ -75,12 +77,11 @@ void AXP2101::AXP2101::setup()
     // Set charge cut-off voltage
     this->setChargeTargetVoltage(XPOWERS_AXP2101_CHG_VOL_4V1);
 
-    // Set the watchdog trigger event type
-    // this->setWatchdogConfig(XPOWERS_AXP2101_WDT_IRQ_TO_PIN);
-    // Set watchdog timeout
-    this->setWatchdogTimeout(XPOWERS_AXP2101_WDT_TIMEOUT_4S);
-    // Enable watchdog to trigger interrupt event
-    this->enableWatchdog();
+    if (!this->disable_watchdog_) {
+        // Enable watchdog unless explicitly disabled in config.
+        this->setWatchdogTimeout(XPOWERS_AXP2101_WDT_TIMEOUT_4S);
+        this->enableWatchdog();
+    }
 
     // Set the time of pressing the button to turn off
     this->setPowerKeyPressOffTime(XPOWERS_POWEROFF_4S);
@@ -141,6 +142,8 @@ void AXP2101::AXP2101::loop(){ }
 void AXP2101::AXP2101::dump_config()
 {
     ESP_LOGCONFIG(TAG, "AXP2101:");
+    ESP_LOGCONFIG(TAG, "  disable_watchdog: %s", YESNO(this->disable_watchdog_));
+    ESP_LOGCONFIG(TAG, "  disable_power_rail_changes: %s", YESNO(this->disable_power_rail_changes_));
     ESP_LOGCONFIG(TAG, "DC1  : %s   Voltage:%u mV",  this->isEnableDC1()  ? "+" : "-", this->getDC1Voltage());
     ESP_LOGCONFIG(TAG, "DC2  : %s   Voltage:%u mV",  this->isEnableDC2()  ? "+" : "-", this->getDC2Voltage());
     ESP_LOGCONFIG(TAG, "DC3  : %s   Voltage:%u mV",  this->isEnableDC3()  ? "+" : "-", this->getDC3Voltage());
